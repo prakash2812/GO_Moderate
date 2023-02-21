@@ -2,10 +2,13 @@ package controller
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/arjun/modules/25-mongoapi/model"
+	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -24,8 +27,6 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Mongo db connection success")
-
 	collection = (*mongo.Collection)(client.Database(dbName).Collection(colName))
 	// collection instance is ready
 
@@ -94,4 +95,51 @@ func collectAllMovies() []primitive.M {
 	}
 	defer result.Close(context.Background())
 	return movies
+}
+
+// Actual controller via api call - we can put all these in another files
+func GetAllMovies(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	allMovies := collectAllMovies()
+	json.NewEncoder(w).Encode(allMovies)
+}
+
+func CreateMovie(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Allow-Controll-Allow-Methods", "POST")
+
+	var movies model.Netflix
+
+	json.NewDecoder(r.Body).Decode(&movies)
+	insertOneMovie(movies)
+	json.NewEncoder(w).Encode(movies)
+
+}
+
+func MarckAsWatched(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Allow-Controll-Allow-Methods", "PUST")
+
+	params := mux.Vars(r)
+	updateOneMovie(params["id"])
+	json.NewEncoder(w).Encode("Updated mark as watched")
+}
+
+func DeleteAMovie(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Allow-Controll-Allow-Methods", "DELETE")
+
+	params := mux.Vars(r)
+	deleteOneMovie(params["id"])
+	json.NewEncoder(w).Encode(params["id"])
+
+}
+func DeleteAllMovie(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Allow-Controll-Allow-Methods", "DELETE")
+
+	count := deleteManyMovie()
+	json.NewEncoder(w).Encode(count)
+
 }
