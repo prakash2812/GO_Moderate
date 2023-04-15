@@ -56,7 +56,7 @@ func DecodeJSON() {
 	// sometimes where we add data to key values
 	var onlineData map[string]interface{}
 	json.Unmarshal(jsonFormatfromWeb, &onlineData)
-	fmt.Println("My onlive data", onlineData)
+	fmt.Println("My onlive data not diff", onlineData)
 	fmt.Printf("My onlive data %#v", onlineData)
 	onlineData["Price"] = "2812"
 	for key, value := range onlineData {
