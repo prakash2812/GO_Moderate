@@ -1,6 +1,7 @@
 package health
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/arjun/modules/go-dynamoDB/internal/handlers"
@@ -21,19 +22,19 @@ func NewHandler(respository adapter.Interface) handlers.Interface {
 
 func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 	if !h.Repository.Health() {
-		HttpStatus.StatusInternalServerError(w,r errors.New("Relation database is not started"))
+		HttpStatus.StatusInternalServerError(w, r, errors.New("Relation database is not started"))
 	}
 	HttpStatus.StatusOk(w, r, "service ok")
 }
 func (h *Handler) Post(w http.ResponseWriter, r *http.Request) {
-
+	HttpStatus.StatusMethodNotAllowed(w, r)
 }
 func (h *Handler) Put(w http.ResponseWriter, r *http.Request) {
-
+	HttpStatus.StatusMethodNotAllowed(w, r)
 }
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
-
+	HttpStatus.StatusMethodNotAllowed(w, r)
 }
 func (h *Handler) Options(w http.ResponseWriter, r *http.Request) {
-
+	HttpStatus.StatusNoContent(w, r)
 }

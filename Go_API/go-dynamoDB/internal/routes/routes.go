@@ -38,6 +38,7 @@ func (r *Router) SetConfigsRouters() {
 	r.EnableRequestID()
 	r.EnableRealIP()
 }
+
 func (r *Router) RouterHealth(repository adapter.Interface) {
 	handler := HealthHandler.NewHandler(repository)
 	r.router.Route("/health", func(route chi.Router) {
@@ -48,6 +49,7 @@ func (r *Router) RouterHealth(repository adapter.Interface) {
 		route.Options("/", handler.Options)
 	})
 }
+
 func (r *Router) RouterProduct(repository adapter.Interface) {
 	handler := ProductHandler.NewHandler(repository)
 	r.router.Route("/product", func(route chi.Router) {
